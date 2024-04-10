@@ -48,14 +48,15 @@ def build_prediction_image(images_paths, preds_correct=None):
         color = (0, 255, 0) if correct else (255, 0, 0)
         draw(img, color)
     concat_image = np.ones([H, (num_images*W)+((num_images-1)*SPACE), 3])
-#    rescaleds = [rescale(i, [min(H/i.shape[0], W/i.shape[1]), min(H/i.shape[0], W/i.shape[1]), 1]) for i in images]
+#    rescaleds = [rescale(i, [min(H/i.shape[0], W/i.shape[1]), min(H/i.shape[0], W/i.shape[1])]) for i in images]
+#    rescaleds = [rescale(i, [min(H/i.shape[0], W/i.shape[1]), min(H/i.shape[0], W/i.shape[1]), 1], channel_axis=2) for i in images]
     rescaleds = [rescale(i, min(H/i.shape[0], W/i.shape[1])) for i in images]
     for i, image in enumerate(rescaleds):
         pad_width = (W - image.shape[1] + 1) // 2
         pad_height = (H - image.shape[0] + 1) // 2
+        if len(image.shape) == 2:
+            image = image[:, :, None]
         image = np.pad(image, [[pad_height, pad_height], [pad_width, pad_width], [0, 0]], constant_values=1)[:H, :W]
-        print(f"shape ci: {concat_image.shape}")
-        print(f"shape i: {image.shape}")
         min_c = min(concat_image.shape[2], image.shape[2])
         concat_image[: , i*(W+SPACE) : i*(W+SPACE)+W, :min_c] = image[:, :, :min_c]
     try:
