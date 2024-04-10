@@ -3,7 +3,7 @@ import os
 import cv2
 import numpy as np
 from tqdm import tqdm
-from skimage.transform import rescale
+from skimage.transform import rescale, resize
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -39,7 +39,7 @@ def build_prediction_image(images_paths, preds_correct=None):
     For each image, if is_correct then draw a green/red box.
     """
     assert len(images_paths) == len(preds_correct)
-    labels = ["Query"] + [f"Pr{i} - {is_correct}" for i, is_correct in enumerate(preds_correct[1:])]
+    labels = ["Query"] + [f"Prediction {i}" for i, is_correct in enumerate(preds_correct[1:])]
     # labels = ["Query", "Predictions"]
     num_images = len(images_paths)
     images = [np.array(Image.open(path)) for path in images_paths]
@@ -53,7 +53,8 @@ def build_prediction_image(images_paths, preds_correct=None):
 #    rescaleds = [rescale(i, [min(H/i.shape[0], W/i.shape[1]), min(H/i.shape[0], W/i.shape[1]), 1], channel_axis=2) for i in images]
     shapes = [i.shape[2] for i in images]
     logging.debug(f"all shapes[2]: {shapes}")
-    rescaleds = [rescale(i, min(H/i.shape[0], W/i.shape[1])) for i in images]
+    # rescaleds = [rescale(i, min(H/i.shape[0], W/i.shape[1])) for i in images]
+    rescaleds = [resize(i, (int(min(H/i.shape[0], W/i.shape[1])) * i.shape[0], int(min(H/i.shape[0], W/i.shape[1])) * i.shape[1])) for i in images]
     shapes = [i.shape[2] for i in rescaleds]
     logging.debug(f"all shapes rescaled[2]: {shapes}")
 
