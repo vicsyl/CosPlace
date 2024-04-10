@@ -1,4 +1,4 @@
-
+import logging
 import os
 import cv2
 import numpy as np
@@ -39,7 +39,8 @@ def build_prediction_image(images_paths, preds_correct=None):
     For each image, if is_correct then draw a green/red box.
     """
     assert len(images_paths) == len(preds_correct)
-    labels = ["Query"] + [f"Pr{i} - {is_correct}" for i, is_correct in enumerate(preds_correct[1:])]
+    # labels = ["Query"] + [f"Pr{i} - {is_correct}" for i, is_correct in enumerate(preds_correct[1:])]
+    labels = ["Query", "Predictions"]
     num_images = len(images_paths)
     images = [np.array(Image.open(path)) for path in images_paths]
     for img, correct in zip(images, preds_correct):
@@ -56,8 +57,10 @@ def build_prediction_image(images_paths, preds_correct=None):
         pad_height = (H - image.shape[0] + 1) // 2
         if len(image.shape) == 2:
             image = np.repeat(image[:, :, None], 3, axis=2)
+            logging.debug("repeated")
         image = np.pad(image, [[pad_height, pad_height], [pad_width, pad_width], [0, 0]], constant_values=1)[:H, :W]
         min_c = min(concat_image.shape[2], image.shape[2])
+        logging.debug(f"min_c: {min_c}")
         concat_image[: , i*(W+SPACE) : i*(W+SPACE)+W, :min_c] = image[:, :, :min_c]
     try:
         labels_image = write_labels_to_image(labels)

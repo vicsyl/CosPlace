@@ -31,7 +31,7 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
             all_descriptors[indices.numpy(), :] = descriptors
 
         logging.debug("Extracting queries descriptors for evaluation/testing using batch size 1")
-        queries_infer_batch_size = 1
+        queries_infer_batch_size = 5
         queries_subset_ds = Subset(eval_ds, list(range(eval_ds.database_num, eval_ds.database_num+eval_ds.queries_num)))
         queries_dataloader = DataLoader(dataset=queries_subset_ds, num_workers=args.num_workers,
                                         batch_size=queries_infer_batch_size, pin_memory=(args.device == "cuda"))
