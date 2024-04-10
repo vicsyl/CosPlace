@@ -60,6 +60,7 @@ def build_prediction_image(images_paths, preds_correct=None):
             logging.debug("repeated")
         image = np.pad(image, [[pad_height, pad_height], [pad_width, pad_width], [0, 0]], constant_values=1)[:H, :W]
         min_c = min(concat_image.shape[2], image.shape[2])
+        logging.debug(f"shape[2]: {concat_image.shape[2], image.shape[2]}")
         logging.debug(f"min_c: {min_c}")
         concat_image[: , i*(W+SPACE) : i*(W+SPACE)+W, :min_c] = image[:, :, :min_c]
     try:
