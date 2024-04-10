@@ -55,7 +55,7 @@ def build_prediction_image(images_paths, preds_correct=None):
         pad_width = (W - image.shape[1] + 1) // 2
         pad_height = (H - image.shape[0] + 1) // 2
         if len(image.shape) == 2:
-            image = image[:, :, None]
+            image = np.repeat(image[:, :, None], 3, axis=2)
         image = np.pad(image, [[pad_height, pad_height], [pad_width, pad_width], [0, 0]], constant_values=1)[:H, :W]
         min_c = min(concat_image.shape[2], image.shape[2])
         concat_image[: , i*(W+SPACE) : i*(W+SPACE)+W, :min_c] = image[:, :, :min_c]
