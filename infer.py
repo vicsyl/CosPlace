@@ -51,7 +51,7 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
     del database_descriptors, all_descriptors
 
     logging.debug("Calculating recalls")
-    retrieved_count = 1
+    retrieved_count = 3
     distance, predictions = faiss_index.search(queries_descriptors, retrieved_count)
 
     logging.debug(f"distances: {distance}")
