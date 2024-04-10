@@ -54,7 +54,13 @@ def build_prediction_image(images_paths, preds_correct=None):
     shapes = [i.shape[2] for i in images]
     logging.debug(f"all shapes[2]: {shapes}")
     # rescaleds = [rescale(i, min(H/i.shape[0], W/i.shape[1])) for i in images]
-    rescaleds = [resize(i, (int(min(H/i.shape[0], W/i.shape[1])) * i.shape[0], int(min(H/i.shape[0], W/i.shape[1])) * i.shape[1])) for i in images]
+    rescaleds = []
+    for i in images:
+        logging.debug(f"image shape: {i.shape}")
+        target_shape = (int(min(H/i.shape[0], W/i.shape[1])) * i.shape[0], int(min(H/i.shape[0], W/i.shape[1])) * i.shape[1])
+        logging.debug(f"target_shape: {target_shape}")
+        rsd = resize(i, target_shape)
+        rescaleds.append(rsd)
     shapes = [i.shape[2] for i in rescaleds]
     logging.debug(f"all shapes rescaled[2]: {shapes}")
 
