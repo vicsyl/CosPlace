@@ -1,3 +1,4 @@
+import os
 
 import faiss
 import torch
@@ -23,12 +24,14 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
         database_dataloader = DataLoader(dataset=database_subset_ds, num_workers=args.num_workers,
                                          batch_size=args.infer_batch_size, pin_memory=(args.device == "cuda"))
         all_descriptors = np.empty((len(eval_ds), args.fc_output_dim), dtype="float32")
+        all_files = []
         logging.debug("DB FILES")
         for images, files, indices in tqdm(database_dataloader, ncols=100):
             logging.debug(f"files: {files}")
             descriptors = model(images.to(args.device))
             descriptors = descriptors.cpu().numpy()
             all_descriptors[indices.numpy(), :] = descriptors
+            all_files.extend(files)
 
         logging.debug("Extracting queries descriptors for evaluation/testing using batch size 1")
         queries_infer_batch_size = 5
@@ -41,9 +44,13 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
             descriptors = model(images.to(args.device))
             descriptors = descriptors.cpu().numpy()
             all_descriptors[indices.numpy(), :] = descriptors
+            all_files.extend(files)
 
     queries_descriptors = all_descriptors[eval_ds.database_num:]
     database_descriptors = all_descriptors[:eval_ds.database_num]
+
+    queries_files = all_files[eval_ds.database_num:]
+    database_files = all_files[:eval_ds.database_num]
 
     # Use a kNN to find predictions
     faiss_index = faiss.IndexFlatL2(args.fc_output_dim)
@@ -54,8 +61,16 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
     retrieved_count = 3
     distance, predictions = faiss_index.search(queries_descriptors, retrieved_count)
 
+    os.makedirs(f"{args.output_folder}/preds/texts", exist_ok=True)
+    out_path = f"{args.output_folder}/preds/texts/mapping.txt"
+    entries = []
+    for i, preds in enumerate(predictions):
+        entries.append(f"{queries_files[i]} {database_files[preds[i]]}")
+    with open(out_path, "w") as file:
+        file.write("\n".join(entries))
+
     logging.debug(f"distances: {distance}")
-    logging.debug(f"predictions: {predictions}")
+    logging.debug(f"predictions:\n{predictions}")
 
     # Save visualizations of predictions
     if num_preds_to_save != 0:
