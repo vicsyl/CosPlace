@@ -65,7 +65,7 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
     out_path = f"{args.output_folder}/preds/texts/mapping.txt"
     entries = []
     for i, preds in enumerate(predictions):
-        entries.append(f"{queries_files[i]} {database_files[preds[i]]}")
+        entries.append(f"{queries_files[i]} {database_files[preds[1]]}")
     with open(out_path, "w") as file:
         file.write("\n".join(entries))
 
