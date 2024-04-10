@@ -54,6 +54,9 @@ def build_prediction_image(images_paths, preds_correct=None):
     shapes = [i.shape[2] for i in images]
     logging.debug(f"all shapes[2]: {shapes}")
     rescaleds = [rescale(i, min(H/i.shape[0], W/i.shape[1])) for i in images]
+    shapes = [i.shape[2] for i in rescaleds]
+    logging.debug(f"all shapes rescaled[2]: {shapes}")
+
     for i, image in enumerate(rescaleds):
         pad_width = (W - image.shape[1] + 1) // 2
         pad_height = (H - image.shape[0] + 1) // 2
