@@ -9,7 +9,7 @@ from argparse import Namespace
 from torch.utils.data.dataset import Subset
 from torch.utils.data import DataLoader, Dataset
 
-import visualizations
+import infer_visualizations
 
 
 def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
@@ -60,5 +60,5 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
     # Save visualizations of predictions
     if num_preds_to_save != 0:
         # For each query save num_preds_to_save predictions
-        visualizations.save_preds(predictions[:, :num_preds_to_save], eval_ds, args.output_folder, args.save_only_wrong_preds)
+        infer_visualizations.save_preds(predictions[:, :num_preds_to_save], eval_ds, args.output_folder, args.save_only_wrong_preds)
 
