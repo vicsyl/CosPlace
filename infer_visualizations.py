@@ -51,6 +51,8 @@ def build_prediction_image(images_paths, preds_correct=None):
     concat_image = np.ones([H, (num_images*W)+((num_images-1)*SPACE), 3])
 #    rescaleds = [rescale(i, [min(H/i.shape[0], W/i.shape[1]), min(H/i.shape[0], W/i.shape[1])]) for i in images]
 #    rescaleds = [rescale(i, [min(H/i.shape[0], W/i.shape[1]), min(H/i.shape[0], W/i.shape[1]), 1], channel_axis=2) for i in images]
+    shapes = [i.shape[2] for i in images]
+    print(f"all shapes[2]: {shapes}")
     rescaleds = [rescale(i, min(H/i.shape[0], W/i.shape[1])) for i in images]
     for i, image in enumerate(rescaleds):
         pad_width = (W - image.shape[1] + 1) // 2
