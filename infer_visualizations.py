@@ -1,5 +1,6 @@
 import logging
 import os
+
 import cv2
 import numpy as np
 from tqdm import tqdm
@@ -110,7 +111,7 @@ def save_preds(predictions, eval_ds, output_folder, save_only_wrong_preds=None):
         i.e. the ones where the first pred is uncorrect (further than 25 m)
     """
     # positives_per_query = eval_ds.get_positives()
-    os.makedirs(f"{output_folder}/preds", exist_ok=True)
+    os.makedirs(f"{output_folder}/preds/texts", exist_ok=True)
     for query_index, preds in enumerate(tqdm(predictions, ncols=80, desc=f"Saving preds in {output_folder}")):
         query_path = eval_ds.queries_paths[query_index]
         list_of_images_paths = [query_path]
@@ -136,5 +137,5 @@ def save_preds(predictions, eval_ds, output_folder, save_only_wrong_preds=None):
             query_path=list_of_images_paths[0],
             preds_paths=list_of_images_paths[1:],
             positives_paths=positives_paths,
-            output_path=f"{output_folder}/preds/{query_index:03d}.txt"
+            output_path=f"{output_folder}/preds/texts/{query_index:03d}.txt"
         )
