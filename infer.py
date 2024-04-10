@@ -57,8 +57,8 @@ def infer(args: Namespace, eval_ds: Dataset, model: torch.nn.Module,
     logging.debug(f"distances: {distance}")
     logging.debug(f"predictions: {predictions}")
 
-    # # Save visualizations of predictions
-    # if num_preds_to_save != 0:
-    #     # For each query save num_preds_to_save predictions
-    #     visualizations.save_preds(predictions[:, :num_preds_to_save], eval_ds, args.output_folder, args.save_only_wrong_preds)
+    # Save visualizations of predictions
+    if num_preds_to_save != 0:
+        # For each query save num_preds_to_save predictions
+        visualizations.save_preds(predictions[:, :num_preds_to_save], eval_ds, args.output_folder, args.save_only_wrong_preds)
 
